@@ -1,0 +1,86 @@
+var SPREADSHEET_ID = "1N5I82OXyV3e1VXXyBuEaJ03EWc3kWY7Y_JlHl360rug";
+//docs.google.com/spreadsheets/d/1rmsSWYsWSYCOkRK4taCSBtIkXqkwBJKXon-WgeaV5SM/edit?usp=sharing
+https: var TAB_NAME = "Sheet1";
+
+
+function initMap() {
+    // Define map options
+    var mapOptions = {
+        zoom: 13,
+        center: {lat: 51.525611 , lng: -0.059855}, // Default center
+        mapId: "4bca94b7572606bc"
+    };
+// https://docs.google.com/spreadsheets/d/1N5I82OXyV3e1VXXyBuEaJ03EWc3kWY7Y_JlHl360rug/edit?usp=sharing
+    // Create a new map
+    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    const geocoder = new google.maps.Geocoder();
+    // Load and process CSV data
+      const url = `https://opensheet.elk.sh/${SPREADSHEET_ID}/${TAB_NAME}`;
+
+  // fetch('mapsMT3.csv')
+        // .then(response => response.text())
+    fetch(url)
+    .then(response => response.json())
+        .then(json => {
+      console.log("the json is: ", json)
+            // var rows = csv.split('\n');
+      // console.log(rows)
+      // let row_counter = 0;
+            json.forEach((row, index) => {
+              // if(row_counter > 0){
+                                // if (index === 0) return; // Skip header
+                // const columns = row.split(',');
+
+                // const treeName = columns[0];
+                // const location = columns[1];
+                // const tree3d = columns[2];
+                // const treeVideo = columns[3];
+                // const latitude = parseFloat(columns[4]);
+                // const longitude = parseFloat(columns[5]);
+                // const iconUrl = columns[6];
+                console.log("the row is: ", row)
+                console.log("the treename is: ", row["tree name"]);
+                console.log("the location is: ", row["location"]);
+                console.log("the tree3d is: ", row["tree 3d"]);
+                console.log("the treeVideo is: ", row["tree video"]);
+              console.log("the latitude is: ", row["latitude"]);
+              console.log("the longitude is: ", row["longitude"]);
+                console.log("the icon is: ", row["icons"])
+                // Geocode the address to get latitude and longitude
+                
+                geocoder.geocode({ 'address': row["location"] }, function(results, status) {
+                    if (status == 'OK') {
+                        const iconImage = document.createElement("img");
+                         iconImage.src   = row["icons"];
+                      console.log("icon image src is: ", iconImage.src)
+                        // Place a marker at the geocoded location
+                        var marker = new google.maps.Marker({
+                            map: map,
+                            position:  {lat: parseFloat(row["latitude"]), lng: parseFloat(row["longitude"])},
+                            title: row["tree name"],
+                            icon: row["icons"] 
+                        });
+                      console.log("the marker is: ", marker)
+
+                        // You can use an info window to display links or embed the 3D model and video
+                        var infoContent = `<h1>${row["tree name"]}</h1><model-viewer alt="Tree" src=${row["tree 3d"]} shadow-intensity="1" camera-controls touch-action="pan-y"></model-viewer><p><a href="${row["tree video"]}">Watch Video</a></p>`;
+                        var infowindow = new google.maps.InfoWindow({
+                            content: infoContent
+                        });
+
+                        marker.addListener('click', function() {
+                            infowindow.open(map, marker);
+                            // add close all other markers by adding markers to an array
+                        });
+                    } else {
+                        console.error('Geocode was not successful for the following reason: ' + status);
+                    }
+                });
+              // }
+              // row_counter++;
+
+            });
+        });
+}
+
+// Include the async defer script tag in your HTML to load the Google Maps API

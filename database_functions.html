@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Meta tags and title -->
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <script type="module" src="firestore_functions.js"></script>
+    <script type="module" src="script.js"></script>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="cropper.css" />
+    <title>Firestore Database Functions</title>
+    <style>
+      /* Your custom styles */
+      .container {
+        justify-content: center;
+        margin: 20px auto;
+        max-width: 625px;
+        max-height: 468.75px;
+        min-width: 625px;
+        min-height: 468.75px;
+      }
+      #cropper_container_fe {
+        max-width: 400px;
+        min-width: 400px;
+        min-height: 300px;
+        max-height: 300px;
+      }
+      img#cropperimage {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto; /* Ensures the image width adjusts according to its container */
+        height: auto; /* Ensures the image height adjusts according to its container */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="content flex-column">
+        <div class="flex-column">
+          <h1>Firestore Core Processes</h1>
+          <!-- Existing content -->
+        </div>
+        <div class="flex-column">
+          <!-- Upload tree image section -->
+          <div>
+            <h2>Upload Tree Image</h2>
+            <input type="file" id="tree-image-input" accept="image/*">
+            <button onclick="uploadTreeImage()" class="main_button">Upload</button>
+          </div>
+        </div>
+        <!-- Existing content -->
+      </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.4/firebase-storage.js"></script>
+    <script>
+      // Firebase configuration
+      const firebaseConfig = {
+        // Your Firebase config
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      // Get a reference to Firebase storage service
+      const storage = firebase.storage();
+
+      // Function to upload tree image
+      function uploadTreeImage() {
+        const fileInput = document.getElementById('tree-image-input');
+        const file = fileInput.files[0];
+
+        // Create a storage reference
+        const storageRef = storage.ref(`tree-images/${file.name}`);
+
+        // Upload file to Firebase Storage
+        const uploadTask = storageRef.put(file);
+
+        // Listen for state changes, errors, and completion of the upload
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            // Track progress
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+          },
+          (error) => {
+            // Handle unsuccessful uploads
+            console.error('Error uploading file:', error);
+          },
+          () => {
+            // Handle successful uploads on complete
+            console.log('File uploaded successfully');
+            // You can add further actions here, like updating UI or database
+          }
+        );
+      }
+    </script>
+  </body>
+</html>
+ 
