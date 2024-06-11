@@ -27,7 +27,6 @@ body {
 h1, h2, h3, h4, h5, h6 {
     font-family: 'OuvrièresGX', sans-serif;
     font-weight: bold;
-    background-color: rgba(0, 0, 0, 0.5); /* Background color changed to semi-transparent black */
     color: #fff; /* Text color changed to white */
     padding: 5px;
     display: inline-block;
