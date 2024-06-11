@@ -45,6 +45,25 @@
         text-transform: uppercase; /* Make button text uppercase */
       }
 
+      .back-button {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        padding: 10px 20px;
+        background-color: black;
+        color: white;
+        text-decoration: none;
+        font-family: 'OuvrièresGX', sans-serif;
+        border-radius: 5px;
+        box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.6);
+        z-index: 10;
+      }
+
+      .back-button:hover {
+        background-color: #333;
+        box-shadow: 0 0 15px 7px rgba(255, 255, 255, 0.8);
+      }
+
       canvas {
         width: 100vw;
         height: 100vh;
@@ -140,6 +159,7 @@
     </style>
   </head>
   <body>
+    <a href="index.html" class="back-button">Back</a>
     <div id="overlayImage"></div>
     <button id="leafButton">snap to save</button>
     <div id="myModal" style="display: none">
