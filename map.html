@@ -1,1 +1,140 @@
-sudo xcodebuild -license
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Money Trees</title>
+    <style>
+        @font-face {
+            font-family: 'OuvrièresGX';
+            src: url('https://cdn.glitch.global/5e98aad4-e9be-41b4-96ae-4003030bc52f/Ouvrie%CC%80resGX.ttf?v=1715957292337');
+        }
+        body,
+        html {
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: black;
+            font-family: 'OuvrièresGX', sans-serif; /* Apply custom font to body and html */
+        }
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #map {
+            height: 70vh;
+            width: 50vw; /* Map takes 50% of the width of the page */
+            -webkit-box-shadow: 0px 0px 32px 0px rgba(255, 255, 255, 0.75);
+            -moz-box-shadow: 0px 0px 32px 0px rgba(255, 255, 255, 0.75);
+            box-shadow: 0px 0px 32px 0px rgba(255, 255, 255, 0.75);
+            border-radius: 10px;
+        }
+        model-viewer {
+            width: 300px !important;
+            height: 300px !important;
+            padding: 10px;
+            -webkit-box-shadow: 0px 0px 15px 0px rgba(255, 0, 0, 0.75);
+            -moz-box-shadow: 0px 0px 15px 0px rgba(255, 0, 0, 0.75);
+            box-shadow: 0px 0px 15px 0px rgba(255, 0, 0, 0.75);
+            border-radius:10px;
+          background:black;
+          margin:10px;
+        }
+        #investText {
+            font-size: 4em;
+            font-family: 'OuvrièresGX'; /* Use the custom font */
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            position: absolute;
+            top: 12%;
+            left: 9%;
+            color: white;
+        }
+        video {
+            width: 80%;
+            height: auto;
+        }
+        .infoContent {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: white;
+            color: black;
+            font-family: 'OuvrièresGX'; /* Use the custom font */
+            align-items: center;
+          width:25vw;
+          padding-bottom:30px;
+        }
+      .gm-style-iw-d{
+        background:black;
+/*           outline: black solid 15px; */
+        overflow-x:hidden !important;
+        border:0px;
+      }
+      .gm-style-iw{
+        border:0px !important;
+      }
+/*       .gm-style-iw-d::-webkit-scrollbar-thumb {
+        background-color: black;
+        outline: 1px solid black;
+        
+      } */
+        .uppercase-text {
+            text-transform: uppercase;
+        }
+      button{
+        font-family: 'OuvrièresGX';
+        background:white;
+      box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.6);
+        }
+
+        button:hover {
+            background-color: #333;
+            box-shadow: 0 0 15px 7px rgba(255, 255, 255, 0.8);
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: black;
+            color: white;
+            text-decoration: none;
+            font-family: 'OuvrièresGX', sans-serif;
+            border-radius: 5px;
+            box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.6);
+        }
+
+        .back-button:hover {
+            background-color: #333;
+            box-shadow: 0 0 15px 7px rgba(255, 255, 255, 0.8);
+        }
+    </style>
+    <script
+        type="module"
+        src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"
+    ></script>
+</head>
+<body>
+    <a href="index.html" class="back-button">Back</a>
+    <div class="wrapper">
+        <div id="map"></div>
+        <div style="padding:10px;">
+            <p class="uppercase-text" style="color:white;">
+                click on tree icons to inspect model
+            </p>
+        </div>
+    </div>
+    <h1 id="investText">INVE$$$T</h1>
+    <script src="mapScript.js"></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCo8v2hbJLUYvMqK6k0CBstivbEPHsXLPQ&callback=initMap"
+        async
+        defer
+    ></script>
+</body>
+</html>
