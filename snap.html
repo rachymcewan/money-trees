@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Responsive Image Over Canvas</title>
+    <style>
+      @font-face {
+        font-family: "OuvrièresGX";
+        src: url("https://cdn.glitch.global/5e98aad4-e9be-41b4-96ae-4003030bc52f/Ouvrie%CC%80resGX.ttf?v=1715957292337");
+      }
+
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: "OuvrièresGX", sans-serif;
+        text-transform: uppercase; /* Make all text uppercase */
+      }
+
+      #overlayImage {
+        position: absolute;
+        z-index: 10;
+        top: 0%;
+        left: 50%;
+        transform: translate(-50%, 0); /* Center horizontally */
+        max-width: 50%;
+        height: auto;
+      }
+
+      #leafButton {
+        position: absolute;
+        font-family: "OuvrièresGX", monospace;
+        font-weight: 400;
+        position: fixed;
+        left: 50%;
+        bottom: 0%;
+        transform: translate(-50%, -50%);
+        margin: 0 auto;
+        z-index: 10;
+        background: transparent;
+        color: white;
+        font-size: 1.5rem;
+        text-transform: uppercase; /* Make button text uppercase */
+      }
+
+      .back-button {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        padding: 10px 20px;
+        background-color: black;
+        color: white;
+        text-decoration: none;
+        font-family: 'OuvrièresGX', sans-serif;
+        border-radius: 5px;
+        box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.6);
+        z-index: 10;
+      }
+
+      .back-button:hover {
+        background-color: #333;
+        box-shadow: 0 0 15px 7px rgba(255, 255, 255, 0.8);
+      }
+
+      canvas {
+        width: 100vw;
+        height: 100vh;
+        display: block; /* Remove margin caused by display:inline by default */
+      }
+
+      #verticalTitle {
+        writing-mode: vertical-rl;
+        font-family: "OuvrièresGX", monospace;
+        font-weight: 400;
+        text-orientation: upright;
+        position: absolute;
+        top: 5%;
+        left: 0%;
+        font-size: 7rem;
+        color: white;
+        margin: 0;
+        text-transform: uppercase; /* Make vertical title text uppercase */
+      }
+
+      #myModal {
+        position: fixed; /* Use fixed instead of absolute for full screen */
+        top: 0;
+        left: 0;
+        z-index: 10;
+        height: 100vh;
+        width: 100vw;
+        background: rgba(0, 0, 0, 0.5); /* Corrected the opacity value */
+        display: flex; /* Use flex to easily center children */
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        font-size: 3rem;
+        flex-direction: column;
+      }
+
+      .modal-content {
+        text-align: center; /* Center the content inside */
+        padding: 20px;
+        border-radius: 5px; /* Optional: rounded corners */
+        color: white;
+        text-transform: uppercase; /* Make modal content text uppercase */
+      }
+      @media only screen and (max-width: 600px) {
+        .inputR {
+          margin-bottom: 10px; /* Add some space between the input and the button */
+          padding: 10px;
+          border: 1px solid #ccc;
+          background: transparent;
+          border-radius: 5px;
+          font-size: 1rem;
+          color: white;
+          font-family: "OuvrièresGX", sans-serif;
+          text-transform: uppercase; /* Make input text uppercase */
+        }
+      }
+      @media only screen and (min-width: 600px) {
+        .inputR {
+          margin-bottom: 10px; /* Add some space between the input and the button */
+          padding: 10px;
+          border: 1px solid #ccc;
+          background: transparent;
+          border-radius: 5px;
+          font-size: 2rem;
+          color: white;
+          font-family: "OuvrièresGX", sans-serif;
+          text-transform: uppercase; /* Make input text uppercase */
+        }
+      }
+      input,
+      select,
+      textarea {
+        color: white;
+        font-family: "OuvrièresGX", sans-serif;
+        text-transform: uppercase; /* Make form elements text uppercase */
+      }
+
+      #submitBtn {
+        padding: 10px 20px;
+        border: none;
+        background-color: #000;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+        font-size: 2rem;
+        font-family: "OuvrièresGX", sans-serif;
+        text-transform: uppercase; /* Make button text uppercase */
+      }
+
+      #submitBtn:hover {
+        background-color: #0056b3; /* Slightly darker shade on hover */
+      }
+    </style>
+  </head>
+  <body>
+    <a href="index.html" class="back-button">Back</a>
+    <div id="overlayImage"></div>
+    <button id="leafButton">snap to save</button>
+    <div id="myModal" style="display: none">
+      <div class="modal-content">
+        <div id="inputContent">
+          <div>
+            <input
+              type="text"
+              id="userName"
+              class="inputR"
+              placeholder="Enter your name"
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              id="emailInput"
+              class="inputR"
+              placeholder="Enter your email"
+            />
+          </div>
+          <button id="submitBtn">Submit</button>
+        </div>
+      </div>
+    </div>
+    <video
+      id="camera-stream"
+      playsinline
+      autoplay
+      muted
+      style="display: none"
+    ></video>
+    <canvas id="videoCanvas"></canvas>
+
+    <script type="module" defer>
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        doc,
+        updateDoc,
+        getDoc,
+        addDoc,
+        FieldValue,
+      } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+      import {
+        getStorage,
+        ref,
+        getDownloadURL,
+        uploadBytes,
+        ref as sRef,
+      } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyAlQXXov3LkclpZDuBk1rUDTk8QNPyimFs",
+        authDomain: "nft-rees.firebaseapp.com",
+        projectId: "nft-rees",
+        storageBucket: "nft-rees.appspot.com",
+        messagingSenderId: "393362868395",
+        appId: "1:393362868395:web:7bd3691c8141d8249acfee",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const storage = getStorage(app);
+      let maxImages = 36;
+      let overlayImage = new Image();
+
+      // Reference to your document
+      const counterRef = doc(db, "trees", "counter");
+      const docSnap = await getDoc(counterRef);
+      let data = docSnap.data();
+      let currentImg = data["currentIm"];
+      let url =
+        "https://cdn.glitch.global/40cb9a88-01ac-443a-a18f-f1d6db3faccd/treeeeeeeeeetransp" +
+        currentImg +
+        ".png";
+
+      overlayImage.src = url;
+      overlayImage.setAttribute("crossorigin", "anonymous");
+      let screenWidth;
+      let newOverlayImageWidth;
+      let newOverlayImageHeight;
+
+      overlayImage.onload = function () {
+        const w = overlayImage.width;
+        const h = overlayImage.height;
+        let overlayImageAspectRatio;
+
+        screenWidth = window.innerWidth;
+        let screenHeight = window.innerHeight;
+        newOverlayImageWidth = screenWidth - screenWidth / 10; // /10 is just a suggestion which takes off 10%
+        overlayImage.width = newOverlayImageWidth;
+        let aspectRatio;
+
+        if (w > h) {
+          aspectRatio = w / h;
+        } else {
+          aspectRatio = h / w;
+        }
+
+        newOverlayImageHeight = newOverlayImageWidth * aspectRatio;
+        overlayImage.height = newOverlayImageHeight;
+      };
+
+      const videoCanvas = document.getElementById("videoCanvas");
+      videoCanvas.width = window.innerWidth;
+      videoCanvas.height = window.innerHeight;
+      const ctx = videoCanvas.getContext("2d");
+      const leafButton = document.getElementById("leafButton");
+      let captureStream = null;
+      const imageSaveCanvas = document.createElement("canvas");
+      const imageSaveCtx = imageSaveCanvas.getContext("2d");
+
+      async function setupCamera() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          console.error(
+            "MediaDevices interface or getUserMedia method not available."
+          );
+          return;
+        }
+        try {
+          captureStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "environment" },
+          });
+          drawVideoToCanvas();
+        } catch (error) {
+          console.error("Error accessing the camera", error);
+        }
+      }
+
+      function drawVideoToCanvas() {
+        if (!captureStream) return;
+
+        const video = document.getElementById("camera-stream");
+        video.srcObject = captureStream;
+        video.play();
+
+        video.addEventListener("loadedmetadata", () => {
+          videoCanvas.width = window.innerWidth;
+          videoCanvas.height = window.innerHeight;
+          imageSaveCanvas.width = video.videoWidth;
+          imageSaveCanvas.height = video.videoHeight;
+          var heightDivider = 7;
+
+          function draw() {
+            if (video.paused || video.ended) return;
+            ctx.clearRect(0, 0, videoCanvas.width, videoCanvas.height);
+            ctx.drawImage(video, 0, 0, videoCanvas.width, videoCanvas.height);
+            ctx.drawImage(
+              overlayImage,
+              screenWidth / 20,
+              screenWidth / heightDivider,
+              newOverlayImageWidth,
+              newOverlayImageHeight
+            );
+            ctx.fillStyle = "black";
+            ctx.fillRect(
+              0,
+              0,
+              videoCanvas.width,
+              screenWidth / heightDivider + 3
+            );
+            ctx.fillRect(0, 0, screenWidth / 20 + 5, videoCanvas.height);
+            ctx.fillRect(
+              screenWidth / 20 + newOverlayImageWidth,
+              0,
+              videoCanvas.width,
+              videoCanvas.height
+            );
+            ctx.fillRect(
+              0,
+              screenWidth / heightDivider + newOverlayImageHeight,
+              videoCanvas.width,
+              videoCanvas.height
+            );
+            imageSaveCtx.clearRect(0, 0, videoCanvas.width, videoCanvas.height);
+            imageSaveCtx.drawImage(
+              video,
+              0,
+              0,
+              videoCanvas.width,
+              videoCanvas.height
+            );
+            requestAnimationFrame(draw);
+          }
+
+          requestAnimationFrame(draw);
+        });
+      }
+
+      leafButton.addEventListener("click", function () {
+        const imageCanvas = document.createElement("canvas");
+        imageCanvas.width = videoCanvas.width;
+        imageCanvas.height = videoCanvas.height;
+        imageCanvas.setAttribute("crossorigin", "anonymous");
+        const imageCtx = imageCanvas.getContext("2d");
+        videoCanvas.setAttribute("crossorigin", "anonymous");
+        imageCtx.drawImage(
+          imageSaveCanvas,
+          0,
+          0,
+          imageSaveCanvas.width,
+          imageSaveCanvas.height
+        );
+
+        imageCanvas.toBlob((blob) => {
+          document.getElementById("myModal").style.display = "flex";
+          document.getElementById("submitBtn").addEventListener(
+            "click",
+            async function () {
+              const userName = document.getElementById("userName").value;
+              let currentEmail = document.getElementById("emailInput").value;
+              let currentDate = new Date().toJSON().slice(0, 10);
+              const storageRef = sRef(
+                storage,
+                "userUploadedTrees/" + userName + "_" + currentDate + ".png"
+              );
+              uploadBytes(storageRef, blob).then((snapshot) => {
+                console.log("Uploaded a blob or file!");
+              });
+              const docRef = await addDoc(collection(db, "trees1"), {
+                name: userName,
+                email: currentEmail,
+                date: currentDate,
+              });
+
+              const docSnap = await getDoc(counterRef);
+              let data = docSnap.data();
+              let imgCounter = data["currentIm"];
+              if (imgCounter < maxImages) {
+                imgCounter++;
+              } else {
+                imgCounter = 1;
+              }
+
+              await updateDoc(counterRef, {
+                currentIm: imgCounter,
+              });
+
+              window.location.href = "finalPage.html";
+            },
+            { once: true }
+          );
+        }, "image/jpeg");
+      });
+
+      setupCamera();
+    </script>
+  </body>
+</html>

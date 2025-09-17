@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Money Trees</title>
+    <style>
+      @font-face {
+        font-family: "OuvrièresGX";
+        src: url("https://cdn.glitch.global/5e98aad4-e9be-41b4-96ae-4003030bc52f/Ouvrie%CC%80resGX.ttf?v=1715957292337");
+      }
+
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-family: "OuvrièresGX", sans-serif;
+        text-transform: uppercase;
+        background-color: black;
+        color: #333;
+      }
+
+      .textBox {
+        padding: 20px;
+        background: url("https://cdn.glitch.global/5e98aad4-e9be-41b4-96ae-4003030bc52f/web1.png?v=1716218578108")
+          no-repeat center center;
+        background-size: cover;
+        color: white;
+        max-width: 800px;
+        margin: 20px auto;
+        font-size: 1.2rem;
+        line-height: 1.6;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        position: relative;
+        border: 5px solid black;
+      }
+
+      .textBox p,
+      .textBox button,
+      .textBox h1 {
+        position: relative;
+        z-index: 2;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 3rem;
+        margin: 20px 0;
+        color: white;
+      }
+
+      p {
+        margin-bottom: 20px;
+      }
+
+      .button-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      button {
+        display: block;
+        width: 200px;
+        padding: 15px;
+        font-size: 1.5rem;
+        font-family: "OuvrièresGX", sans-serif;
+        background-color: black;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        text-transform: uppercase;
+        box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.6);
+      }
+
+      button:hover {
+        background-color: #333;
+        box-shadow: 0 0 15px 7px rgba(255, 255, 255, 0.8);
+      }
+
+      .container {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      input[type="number"] {
+        width: 100px;
+        padding: 5px;
+        font-size: 1.5em;
+        text-align: right;
+        margin-top: 10px;
+        padding-right: 10px;
+      }
+
+      .output {
+        margin-top: 20px;
+        font-size: 1.5em;
+      }
+
+      .additional-text {
+        margin-top: 20px;
+        font-size: 1.2rem;
+        color: white;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="textBox">
+        <h1>Invest in <span id="currentName"></span></h1>
+        <p>
+          EACH DIGITAL TREE ASSET IS ROUGHLY 66 MILLION PIXELS
+          <br />
+          ONE PIXEL COSTS ONE PENNY
+          <br />
+          PLEASE DONATE TO MY GO FUND ME PAGE BY CLICKING ‘INVEST’ BELOW
+          <br />
+          YOU WILL RECEIVE YOUR PIXELS VIA EMAIL ONCE YOU HAVE DONATED
+        </p>
+
+        <label for="price">Price (£):</label>
+        <input type="number" id="price" value="0.00" step="0.01" min="0.00" />
+        <div class="output">Pixels: <span id="pixels">0</span></div>
+      </div>
+      <div class="button-group">
+        <button
+          onclick="window.location.href = 'https://www.gofundme.com/f/money-trees'"
+        >
+          INVEST
+        </button>
+        <div class="additional-text">
+          DONATIONS WILL HELP KICKSTART THIS PROJECT INTO THE COMMUNITY
+          <br />
+          12% OF THE MONEY COLLECTED WILL GO TO THE ARTIST
+          <br />
+          LETS SAVE SOME TREES :) .
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var url = new URL(window.location.href);
+      var id = url.searchParams.get("id");
+      console.log("the id is; ", id);
+      var currentName = document.getElementById("currentName");
+      currentName.innerText = id;
+
+      const priceInput = document.getElementById("price");
+      const pixelsOutput = document.getElementById("pixels");
+
+      priceInput.addEventListener("input", () => {
+        const price = parseFloat(priceInput.value) || 0;
+        const pixels = Math.floor(price * 100);
+        pixelsOutput.textContent = pixels;
+      });
+    </script>
+  </body>
+</html>

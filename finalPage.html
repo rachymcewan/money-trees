@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Trees</title>
+    <link rel="stylesheet" href="rachystyle.css"> <!-- You can create a separate CSS file for styling -->
+    <style>
+        @font-face {
+            font-family: 'OuvrièresGX';
+            src: url('https://cdn.glitch.global/5e98aad4-e9be-41b4-96ae-4003030bc52f/Ouvrie%CC%80resGX.ttf?v=1715957292337');
+        }
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            font-family: 'OuvrièresGX', sans-serif;
+            text-transform: uppercase;
+            background: url('https://cdn.glitch.global/5e98aad4-e9be-41b4-96ae-4003030bc52f/webn2.png?v=1717164261651') no-repeat center center fixed; /* Add your background image URL here */
+            background-size: cover; /* Ensure the background image covers the entire page */
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        header {
+            text-align: center;
+        }
+        main {
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .back-button,
+        .invest-button {
+            padding: 10px 20px;
+            background-color: black;
+            color: white;
+            text-decoration: none;
+            font-family: 'OuvrièresGX', sans-serif;
+            border-radius: 5px;
+            box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.6);
+        }
+        .back-button:hover,
+        .invest-button:hover {
+            background-color: #333;
+            box-shadow: 0 0 15px 7px rgba(255, 255, 255, 0.8);
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        .invest-button {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-button">Back</a>
+    <header>
+        <h1>Money Trees</h1>
+    </header>
+    <main>
+        <section>
+            <h1>
+                Thank you!
+                <br><br>
+                You are a part of creating a digital archive of trees.
+                <br><br>
+                Check out the Invest page to inspect and invest in the current digital archive of trees.
+            </h1>
+        </section>
+        <a href="map.html" class="invest-button">Invest</a>
+    </main>
+</body>
+</html>
+
